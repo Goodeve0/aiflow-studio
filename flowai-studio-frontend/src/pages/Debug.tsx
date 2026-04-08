@@ -104,7 +104,16 @@ const Debug: React.FC = () => {
       })
 
       if (!response.ok) {
-        throw new Error('API request failed')
+        let errorMessage = '发送消息失败'
+
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData?.message || errorMessage
+        } catch {
+          // ignore parse error
+        }
+
+        throw new Error(errorMessage)
       }
 
       const reader = response.body?.getReader()
@@ -149,7 +158,7 @@ const Debug: React.FC = () => {
       }
     } catch (error) {
       console.error('Error sending message:', error)
-      message.error('发送消息失败')
+      message.error(error instanceof Error ? error.message : '发送消息失败')
       setIsStreaming(false)
       setStreamingContent('')
     }
