@@ -71,12 +71,19 @@ const Debug: React.FC = () => {
   const handleSendMessage = async () => {
     if (!input.trim() || isStreaming) return
 
-    const currentInput = input
+    const currentInput = input.trim()
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
       content: currentInput,
       createdAt: new Date().toISOString(),
+    }
+
+    const history = messages.map(msg => ({ role: msg.role, content: msg.content }))
+    const payload = {
+      message: currentInput,
+      history,
+      ...(selectedKbId ? { knowledgeBaseId: selectedKbId } : {}),
     }
 
     setMessages(prev => [...prev, userMessage])
@@ -93,11 +100,7 @@ const Debug: React.FC = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify({
-          message: currentInput,
-          history: messages.map(msg => ({ role: msg.role, content: msg.content })),
-          knowledgeBaseId: selectedKbId,
-        }),
+        body: JSON.stringify(payload),
       })
 
       if (!response.ok) {
