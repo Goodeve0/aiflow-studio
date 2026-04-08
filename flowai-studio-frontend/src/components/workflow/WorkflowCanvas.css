@@ -1,30 +1,84 @@
 .workflow-canvas {
   height: 100%;
   width: 100%;
-  background: #fafafa;
   position: relative;
   overflow: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(120, 235, 255, 0.14), transparent 24%),
+    radial-gradient(circle at top right, rgba(123, 104, 255, 0.12), transparent 22%),
+    linear-gradient(180deg, rgba(248, 251, 255, 0.96), rgba(238, 244, 255, 0.94));
 }
 
-/* 自定义节点样式 */
+.workflow-canvas-overlay {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.workflow-canvas-chip {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(8, 16, 28, 0.76);
+  color: #eff6ff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.workflow-canvas-tip {
+  max-width: 300px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(185, 198, 232, 0.26);
+  box-shadow: 0 10px 28px rgba(22, 42, 82, 0.08);
+  color: #51617f;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.workflow-empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.workflow-empty-state .ant-empty {
+  padding: 26px 30px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(185, 198, 232, 0.28);
+  box-shadow: 0 16px 36px rgba(12, 32, 68, 0.08);
+}
+
 .react-flow__node {
-  border-radius: 8px;
-  border: 1px solid #d9d9d9;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  border-radius: 18px;
+  border: 1px solid rgba(167, 183, 224, 0.32);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 10px 24px rgba(10, 35, 77, 0.08);
   transition: all 0.2s ease;
 }
 
 .react-flow__node:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 14px 28px rgba(10, 35, 77, 0.12);
 }
 
 .react-flow__node.selected {
-  border-color: #1677ff;
-  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2);
+  border-color: #5d77ff;
+  box-shadow: 0 0 0 4px rgba(93, 119, 255, 0.12), 0 14px 30px rgba(10, 35, 77, 0.12);
 }
 
-/* 节点状态样式 */
 .node-status {
   width: 8px;
   height: 8px;
@@ -34,38 +88,31 @@
 }
 
 .node-status.pending {
-  background: #faad14;
+  background: #f59e0b;
 }
 
 .node-status.running {
-  background: #1890ff;
+  background: #3b82f6;
   animation: pulse 1.5s infinite;
 }
 
 .node-status.success {
-  background: #52c41a;
+  background: #22c55e;
 }
 
 .node-status.failed {
-  background: #f5222d;
+  background: #ef4444;
 }
 
 @keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 1;
-  }
+  0% { opacity: 1; }
+  50% { opacity: 0.45; }
+  100% { opacity: 1; }
 }
 
-/* 节点标题 */
 .node-title {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 700;
   margin-bottom: 8px;
   display: flex;
   align-items: center;
@@ -74,24 +121,41 @@
 
 .node-content {
   font-size: 12px;
-  color: #666;
+  color: #61708f;
   padding: 4px 0;
 }
 
-/* 连接线样式 */
 .react-flow__edge-path {
-  stroke: #b1b1b7;
-  stroke-width: 2;
+  stroke: rgba(91, 108, 156, 0.72);
+  stroke-width: 2.2;
 }
 
 .react-flow__edge.selected .react-flow__edge-path {
-  stroke: #1677ff;
+  stroke: #5d77ff;
 }
 
 .react-flow__edge-label {
-  background: white;
-  padding: 2px 8px;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 3px 8px;
+  border-radius: 999px;
   font-size: 12px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid rgba(185, 198, 232, 0.3);
+}
+
+.workflow-controls {
+  box-shadow: 0 12px 24px rgba(10, 35, 77, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.workflow-controls .react-flow__controls-button {
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid rgba(185, 198, 232, 0.22);
+}
+
+.workflow-minimap {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 24px rgba(10, 35, 77, 0.1);
+  background: rgba(255, 255, 255, 0.9) !important;
 }

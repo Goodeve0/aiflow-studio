@@ -1,10 +1,6 @@
 import { useCallback, useRef } from 'react'
-import { ReactFlow, 
-  Background, 
-  Controls, 
-  MiniMap, 
-  useReactFlow
-} from '@xyflow/react'
+import { ReactFlow, Background, Controls, MiniMap, useReactFlow } from '@xyflow/react'
+import { Empty } from 'antd'
 import '@xyflow/react/dist/style.css'
 import { useStore } from '../../store'
 import StartNode from './nodes/StartNode'
@@ -17,7 +13,6 @@ import OutputNode from './nodes/OutputNode'
 import { NodeType, WorkflowNode } from '../../types'
 import './WorkflowCanvas.css'
 
-// 自定义节点类型
 const nodeTypes = {
   start: StartNode,
   userInput: UserInputNode,
@@ -66,23 +61,17 @@ const createNodeData = (type: NodeType): WorkflowNode['data'] => {
 }
 
 const WorkflowCanvas: React.FC = () => {
-  const { 
-    nodes, 
-    edges, 
-    onNodesChange,
-    onEdgesChange,
-    onConnect,
-    setNodes,
-    setSelectedNode, 
-    executionStates 
-  } = useStore()
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setNodes, setSelectedNode } = useStore()
 
   const reactFlowWrapper = useRef<HTMLDivElement>(null)
   const { screenToFlowPosition } = useReactFlow()
 
-  const onNodeClick = useCallback((event: React.MouseEvent, node: any) => {
-    setSelectedNode(node)
-  }, [setSelectedNode])
+  const onNodeClick = useCallback(
+    (_event: React.MouseEvent, node: any) => {
+      setSelectedNode(node)
+    },
+    [setSelectedNode],
+  )
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault()
@@ -95,7 +84,6 @@ const WorkflowCanvas: React.FC = () => {
 
       const type = event.dataTransfer.getData('application/reactflow') as NodeType
 
-      // check if the dropped element is valid
       if (typeof type === 'undefined' || !type) {
         return
       }
@@ -104,7 +92,7 @@ const WorkflowCanvas: React.FC = () => {
         x: event.clientX,
         y: event.clientY,
       })
-      
+
       const newNode: WorkflowNode = {
         id: `${type}_${Date.now()}`,
         type,
@@ -114,11 +102,16 @@ const WorkflowCanvas: React.FC = () => {
 
       setNodes([...nodes, newNode])
     },
-    [screenToFlowPosition, nodes, setNodes]
+    [screenToFlowPosition, nodes, setNodes],
   )
 
   return (
     <div className="workflow-canvas" ref={reactFlowWrapper}>
+      <div className="workflow-canvas-overlay">
+        <div className="workflow-canvas-chip">Workflow Playground</div>
+        <div className="workflow-canvas-tip">拖拽左侧节点到画布中，点击节点后在右侧配置参数。</div>
+      </div>
+
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -132,10 +125,16 @@ const WorkflowCanvas: React.FC = () => {
         fitView
         attributionPosition="top-right"
       >
-        <Background color="#f0f0f0" gap={16} />
-        <Controls />
-        <MiniMap />
+        <Background color="rgba(109, 128, 179, 0.22)" gap={20} size={1.2} />
+        <Controls className="workflow-controls" />
+        <MiniMap className="workflow-minimap" pannable zoomable />
       </ReactFlow>
+
+      {nodes.length === 0 && (
+        <div className="workflow-empty-state">
+          <Empty description="先从左侧拖一个开始节点进来，搭建你的第一条流程" />
+        </div>
+      )}
     </div>
   )
 }
