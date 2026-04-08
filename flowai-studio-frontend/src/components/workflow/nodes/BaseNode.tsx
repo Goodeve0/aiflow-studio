@@ -1,55 +1,109 @@
-import { memo, ReactNode } from 'react';
-import { Card, Typography, Spin } from 'antd';
-import { LoadingOutlined, CheckCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { useStore } from '../../../store';
+import { memo, ReactNode } from 'react'
+import { Typography, Tag } from 'antd'
+import {
+  LoadingOutlined,
+  CheckCircleFilled,
+  CloseCircleFilled,
+  ClockCircleFilled,
+} from '@ant-design/icons'
+import { useStore } from '../../../store'
+import './BaseNode.css'
 
-const { Text } = Typography;
+const { Text } = Typography
 
 interface BaseNodeProps {
-  id: string;
-  label: string;
-  icon: ReactNode;
-  children?: ReactNode;
-  color?: string;
-  width?: number;
+  id: string
+  label: string
+  icon: ReactNode
+  children?: ReactNode
+  color?: string
+  width?: number
+  tone?: string
+  summary?: string
+  badges?: string[]
 }
 
-const BaseNode = ({ id, label, icon, children, color = '#d9d9d9', width = 200 }: BaseNodeProps) => {
-  const executionState = useStore((state) => state.executionStates[id]);
-  const status = executionState?.status || 'pending';
+const BaseNode = ({
+  id,
+  label,
+  icon,
+  children,
+  color = '#d9d9d9',
+  width = 240,
+  tone = 'default',
+  summary,
+  badges = [],
+}: BaseNodeProps) => {
+  const executionState = useStore((state) => state.executionStates[id])
+  const status = executionState?.status || 'pending'
 
-  const getStatusIcon = () => {
+  const getStatusMeta = () => {
     switch (status) {
       case 'running':
-        return <Spin indicator={<LoadingOutlined style={{ fontSize: 14 }} spin />} />;
+        return {
+          icon: <LoadingOutlined spin />,
+          label: '运行中',
+          className: 'is-running',
+        }
       case 'success':
-        return <CheckCircleOutlined style={{ color: '#52c41a' }} />;
+        return {
+          icon: <CheckCircleFilled />,
+          label: '成功',
+          className: 'is-success',
+        }
       case 'failed':
-        return <ExclamationCircleOutlined style={{ color: '#ff4d4f' }} />;
+        return {
+          icon: <CloseCircleFilled />,
+          label: '失败',
+          className: 'is-failed',
+        }
       default:
-        return null;
+        return {
+          icon: <ClockCircleFilled />,
+          label: '待运行',
+          className: 'is-pending',
+        }
     }
-  };
+  }
+
+  const statusMeta = getStatusMeta()
 
   return (
-    <Card 
-      size="small" 
-      style={{ 
-        width, 
-        border: status === 'running' ? '2px solid #1890ff' : `1px solid ${color}`,
-        boxShadow: status === 'running' ? '0 0 10px rgba(24, 144, 255, 0.3)' : 'none'
-      }}
+    <div
+      className={`flow-node-card ${statusMeta.className}`}
+      style={{ '--node-color': color, width } as React.CSSProperties}
+      data-tone={tone}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: children ? 8 : 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ color }}>{icon}</span>
-          <Text strong>{label}</Text>
+      <div className="flow-node-card__glow" />
+      <div className="flow-node-card__header">
+        <div className="flow-node-card__identity">
+          <div className="flow-node-card__icon">{icon}</div>
+          <div className="flow-node-card__copy">
+            <div className="flow-node-card__title-row">
+              <Text className="flow-node-card__title">{label}</Text>
+              <span className={`flow-node-card__status ${statusMeta.className}`}>
+                {statusMeta.icon}
+                <span>{statusMeta.label}</span>
+              </span>
+            </div>
+            {summary && <Text className="flow-node-card__summary">{summary}</Text>}
+          </div>
         </div>
-        {getStatusIcon()}
       </div>
-      {children}
-    </Card>
-  );
-};
 
-export default memo(BaseNode);
+      {badges.length > 0 && (
+        <div className="flow-node-card__badges">
+          {badges.slice(0, 3).map((badge) => (
+            <Tag key={badge} bordered={false} className="flow-node-card__badge">
+              {badge}
+            </Tag>
+          ))}
+        </div>
+      )}
+
+      <div className="flow-node-card__body">{children}</div>
+    </div>
+  )
+}
+
+export default memo(BaseNode)
