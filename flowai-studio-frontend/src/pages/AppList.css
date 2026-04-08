@@ -1,29 +1,93 @@
-.app-list {
-  height: 100%;
+.app-list,
+.kb-list,
+.skill-page,
+.debug,
+.app-editor {
+  min-height: 100%;
 }
 
-.app-list-header {
+.app-list-header,
+.kb-header,
+.skill-header,
+.debug-header,
+.app-editor-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
   gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
 }
 
-.app-list-header .ant-typography {
+.app-list-header .ant-typography,
+.kb-header .ant-typography,
+.skill-header .ant-typography,
+.debug-header .ant-typography,
+.app-editor-header .ant-typography {
   margin: 0;
 }
 
-.app-list-card {
-  height: calc(100% - 80px);
-  overflow: auto;
+.app-list-card,
+.kb-card,
+.skill-card,
+.debug-card,
+.app-editor-tabs .ant-tabs-content-holder,
+.app-editor-tabs .ant-card {
+  border-radius: 24px;
+  border: 1px solid rgba(173, 188, 226, 0.24);
+  box-shadow: 0 16px 40px rgba(14, 41, 78, 0.08);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
 }
 
-.app-icon {
-  color: #1677ff;
-  font-size: 20px;
-  margin-right: 8px;
+.app-list-card .ant-card-body,
+.kb-card .ant-card-body,
+.skill-card .ant-card-body,
+.debug-card .ant-card-body {
+  padding: 18px;
+}
+
+.app-icon,
+.kb-icon {
+  color: #5d77ff;
+  font-size: 18px;
+}
+
+.app-list .ant-table,
+.kb-list .ant-table,
+.skill-page .ant-table {
+  background: transparent;
+}
+
+.app-list .ant-table-thead > tr > th,
+.kb-list .ant-table-thead > tr > th,
+.skill-page .ant-table-thead > tr > th {
+  background: rgba(95, 120, 255, 0.06);
+  color: #30415f;
+  font-weight: 700;
+}
+
+.app-list .ant-table-tbody > tr > td,
+.kb-list .ant-table-tbody > tr > td,
+.skill-page .ant-table-tbody > tr > td {
+  border-bottom: 1px solid rgba(180, 195, 233, 0.22);
+}
+
+.app-list .ant-table-tbody > tr:hover > td,
+.kb-list .ant-table-tbody > tr:hover > td,
+.skill-page .ant-table-tbody > tr:hover > td {
+  background: rgba(120, 235, 255, 0.06);
+}
+
+.app-list .ant-input-affix-wrapper,
+.kb-list .ant-input,
+.skill-page .ant-input,
+.debug .ant-input,
+.debug .ant-select-selector,
+.skill-page .ant-select-selector,
+.app-list .ant-input,
+.app-editor .ant-input {
+  border-radius: 14px !important;
 }
 
 .form-footer {
@@ -34,12 +98,12 @@
 }
 
 @media (max-width: 768px) {
-  .app-list-header {
+  .app-list-header,
+  .kb-header,
+  .skill-header,
+  .debug-header,
+  .app-editor-header {
     flex-direction: column;
     align-items: flex-start;
-  }
-  
-  .app-list-header .ant-input {
-    width: 100%;
   }
 }

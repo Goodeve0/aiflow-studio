@@ -1,11 +1,23 @@
 import { useState } from 'react'
-import { Layout as AntLayout, Menu, Button, Avatar, Dropdown, Space } from 'antd'
+import { Layout as AntLayout, Menu, Button, Avatar, Dropdown, Space, Badge, Typography } from 'antd'
 import { useLocation, useNavigate, Outlet } from 'react-router-dom'
-import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, LogoutOutlined, HomeOutlined, AppstoreOutlined, BookOutlined, ToolOutlined, CodeOutlined } from '@ant-design/icons'
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  UserOutlined,
+  LogoutOutlined,
+  HomeOutlined,
+  BookOutlined,
+  ToolOutlined,
+  CodeOutlined,
+  ThunderboltOutlined,
+  CompassOutlined,
+} from '@ant-design/icons'
 import { useStore } from '../../store'
 import './Layout.css'
 
 const { Header, Sider, Content } = AntLayout
+const { Text, Title } = Typography
 
 const Layout: React.FC = () => {
   const navigate = useNavigate()
@@ -53,6 +65,25 @@ const Layout: React.FC = () => {
     },
   ]
 
+  const routeMeta: Record<string, { title: string; subtitle: string }> = {
+    '/apps': {
+      title: '应用工作台',
+      subtitle: '创建、发布和维护你的 AI 应用。',
+    },
+    '/knowledge-bases': {
+      title: '知识库中枢',
+      subtitle: '管理文档、知识库和检索上下文。',
+    },
+    '/tools': {
+      title: '工具与技能',
+      subtitle: '集中维护内置工具与自定义能力。',
+    },
+    '/debug': {
+      title: '调试中心',
+      subtitle: '验证聊天、工作流和运行结果。',
+    },
+  }
+
   const handleUserMenuClick = ({ key }: { key: string }) => {
     if (key === 'logout') {
       logout()
@@ -64,46 +95,79 @@ const Layout: React.FC = () => {
     navigate(key)
   }
 
-  // 计算当前选中的菜单项，处理子路由情况
   const selectedKey = '/' + (location.pathname.split('/')[1] || 'apps')
+  const currentMeta = routeMeta[selectedKey] || {
+    title: 'FlowAI Studio',
+    subtitle: '统一管理你的 AI 工作流与资源。',
+  }
 
   return (
-    <AntLayout className="layout-container">
-      <Sider trigger={null} collapsible collapsed={collapsed} width={240} className="sidebar">
-        <div className="logo">
-          <h1 className="logo-text">FlowAI Studio</h1>
+    <AntLayout className="layout-shell">
+      <div className="layout-backdrop" />
+      <Sider trigger={null} collapsible collapsed={collapsed} width={268} className="app-sider">
+        <div className="brand-panel">
+          <div className="brand-mark">
+            <ThunderboltOutlined />
+          </div>
+          {!collapsed && (
+            <div className="brand-copy">
+              <Title level={4}>FlowAI Studio</Title>
+              <Text>AI Orchestration Console</Text>
+            </div>
+          )}
         </div>
+
+        {!collapsed && (
+          <div className="nav-intro-card">
+            <Text className="nav-intro-label">Workspace</Text>
+            <div className="nav-intro-row">
+              <CompassOutlined />
+              <span>视觉化管理应用、知识库、工具与调试任务</span>
+            </div>
+          </div>
+        )}
+
         <Menu
           mode="inline"
-          theme="dark"
           selectedKeys={[selectedKey]}
           items={menuItems}
           onClick={handleMenuClick}
-          className="menu"
+          className="app-menu"
         />
       </Sider>
-      <AntLayout>
-        <Header className="header">
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={handleToggle}
-            className="trigger"
-          />
-          <div className="header-right">
-            <Dropdown
-              menu={{ items: userMenu, onClick: handleUserMenuClick }}
-              trigger={['click']}
-            >
-              <Space>
-                <Avatar icon={<UserOutlined />} />
-                <span className="username">{user?.username || '用户'}</span>
-              </Space>
+
+      <AntLayout className="main-layout">
+        <Header className="topbar">
+          <div className="topbar-left">
+            <Button
+              type="text"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={handleToggle}
+              className="layout-trigger"
+            />
+            <div className="topbar-copy">
+              <Text className="topbar-label">{selectedKey.replace('/', '').toUpperCase()}</Text>
+              <Title level={3}>{currentMeta.title}</Title>
+              <Text className="topbar-subtitle">{currentMeta.subtitle}</Text>
+            </div>
+          </div>
+
+          <div className="topbar-right">
+            <Badge status="processing" text="本地开发环境" className="env-badge" />
+            <Dropdown menu={{ items: userMenu, onClick: handleUserMenuClick }} trigger={['click']}>
+              <button className="user-badge" type="button">
+                <Avatar icon={<UserOutlined />} className="user-avatar" />
+                <div className="user-copy">
+                  <span className="username">{user?.username || '用户'}</span>
+                  <span className="user-role">Workspace Owner</span>
+                </div>
+              </button>
             </Dropdown>
           </div>
         </Header>
-        <Content className="content">
-          <div className="content-container">
+
+        <Content className="page-content">
+          <div className="page-surface">
             <Outlet />
           </div>
         </Content>
